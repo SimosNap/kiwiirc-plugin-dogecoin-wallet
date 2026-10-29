@@ -30,7 +30,7 @@
                 </div>
             </template>
 
-            <template v-else-if="!isDogeDropInstalled && !isDogeSoftInstalled">
+            <template v-else-if="!isDogeDropInstalled">
                 <div class="DogeDropNotice">
                     <span>{{ $t('plugin-dogecoin-wallet:wallet_not_installed') }}</span>
 
@@ -42,16 +42,6 @@
                     >
                         <i class="fa fa-paw" aria-hidden="true" />
                         {{ $t('plugin-dogecoin-wallet:install_dogedrop') }}
-                    </a>
-
-                    <a
-                        class="DogeDropStoreLink"
-                        :href="dogeSoftStoreUrl"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <i class="fa fa-paw" aria-hidden="true" />
-                        {{ $t('plugin-dogecoin-wallet:install_dogesoft') }}
                     </a>
 
                 </div>
@@ -73,20 +63,6 @@
                 </button>
 
                 <button
-                    v-if="isDogeSoftInstalled && !pluginState.connected"
-                    type="button"
-                    class="DogeDropConnect"
-                    @click="connectDogeSoft"
-                >
-                    <img
-                        class="DogeDropIcon"
-                        src="/plugins/plugin-dogecoin-wallet/imgs/dogesoft.png"
-                        alt=""
-                    >
-                    <span>DogeSoft Connect</span>
-                </button>
-
-                <button
                     v-if="pluginState.connected"
                     type="button"
                     class="DogeDropConnect"
@@ -94,9 +70,7 @@
                 >
                     <img
                         class="DogeDropIcon"
-                        :src="pluginState.activeWallet === 'dogesoft'
-                            ? '/plugins/plugin-dogecoin-wallet/imgs/dogesoft.png'
-                            : '/plugins/plugin-dogecoin-wallet/imgs/dogedrop.png'"
+                        src="/plugins/plugin-dogecoin-wallet/imgs/dogedrop.png"
                         alt=""
                     >
                     {{ $t('plugin-dogecoin-wallet:disconnect') }}
@@ -176,8 +150,6 @@ export default {
             walletOpen: false,
             dogeDropStoreUrl: 'https://chromewebstore.google.com/detail/dogedrop-dogecoin-wallet/' +
             'mljponncmhdlacmjbophphkbgcgjdnff?pli=1',
-            dogeSoftStoreUrl: 'https://chromewebstore.google.com/detail/doge-soft-wallet/' +
-            'mncnaalpffmdadokkpafllancebgjghf',
         };
     },
     computed: {
@@ -196,9 +168,6 @@ export default {
                 typeof window.doge.open === 'function'
             );
         },
-        isDogeSoftInstalled() {
-            return !!window.dogesoft;
-        },
     },
     methods: {
         openWallet() {
@@ -211,17 +180,8 @@ export default {
                 console.error('failed', err);
             });
         },
-        connectDogeSoft() {
-            this.dogeSoftConnect().then(this.dogePoll).catch((err) => {
-                console.error('failed', err);
-            });
-        },
         disconnectWallet() {
-            const disconnect = this.pluginState.activeWallet === 'dogesoft'
-                ? this.dogeSoftDisconnect()
-                : this.dogeDropDisconnect();
-
-            disconnect.then(() => {
+            this.dogeDropDisconnect().then(() => {
                 window.clearTimeout(this.timeout);
             });
         },
@@ -243,29 +203,6 @@ export default {
                 throw new Error(this.$t('plugin-dogecoin-wallet:connection_denied'));
             }
         },
-        async dogeSoftConnect() {
-            const dogesoft = window.dogesoft;
-
-            const connectRes = await dogesoft.connect();
-
-            if (connectRes.accounts && connectRes.accounts.length) {
-                this.pluginState.activeWallet = 'dogesoft';
-                this.pluginState.connected = true;
-                this.address = connectRes.accounts[0];
-                this.nsdogecoin = this.address;
-
-                if (this.$state.getActiveNetwork().currentUser().account) {
-                    this.Hidden = false;
-                }
-            } else {
-                throw new Error(this.$t('plugin-dogecoin-wallet:connection_denied'));
-            }
-        },
-        async dogeSoftBalance() {
-            const dogesoft = window.dogesoft;
-            const balanceRes = await dogesoft.getBalance();
-            this.pluginState.balance = Number(balanceRes.balance_doge) || 0;
-        },
         async dogeDropDisconnect() {
             const dogedrop = window.doge;
             const disconnectRes = await dogedrop.disconnect();
@@ -277,17 +214,6 @@ export default {
                 this.address = false;
                 this.nsdogecoin = false;
             }
-        },
-        async dogeSoftDisconnect() {
-            const dogesoft = window.dogesoft;
-
-            await dogesoft.disconnect();
-
-            this.pluginState.activeWallet = false;
-            this.pluginState.connected = false;
-            this.pluginState.balance = 0;
-            this.address = false;
-            this.nsdogecoin = false;
         },
         async dogePoll() {
             if (this.pluginState.activeWallet === 'dogedrop') {
@@ -303,11 +229,7 @@ export default {
                 return;
             }
 
-            if (this.pluginState.activeWallet === 'dogesoft') {
-                await this.dogeSoftBalance();
-            } else {
-                await this.dogeDropBalance();
-            }
+            await this.dogeDropBalance();
 
             this.timeout = setTimeout(this.dogePoll, 60000);
         },

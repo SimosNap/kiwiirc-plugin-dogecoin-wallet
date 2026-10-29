@@ -426,31 +426,14 @@ export default {
                 return;
             }
 
-            let transaction;
+            const dogedrop = window.doge;
 
-            if (this.pluginState.activeWallet === 'dogesoft') {
-                const dogesoft = window.dogesoft;
-
-                transaction = dogesoft.sendDoge({
-                    to: this.address,
-                    amount: Number(this.tipAmount),
-                }).then((result) => ({
-                    txId: result.txid,
-                }));
-            } else if (this.pluginState.activeWallet === 'mydoge') {
-                const mydoge = window.doge;
-
-                transaction = mydoge.requestTransaction({
-                    recipientAddress: this.address,
-                    dogeAmount: this.tipAmount,
-                });
-            } else {
-                this.tiperror = true;
-                return;
-            }
+            const transaction = dogedrop.requestTransaction({
+                recipientAddress: this.address,
+                dogeAmount: this.tipAmount,
+            });
 
             transaction.then((txReqRes) => {
-                // console.log('request transaction result', txReqRes);
                 let buffer = this.$state.getActiveBuffer();
                 let mynick = this.$state.getActiveNetwork().nick;
 
@@ -469,7 +452,6 @@ export default {
                             self: true,
                             error: false,
                             reason: '',
-                            wallet: this.pluginState.activeWallet,
                         },
                         nick: '',
                         ident: 'INFO',
@@ -499,7 +481,6 @@ export default {
                                 self: true,
                                 error: true,
                                 reason: error.message,
-                                wallet: this.pluginState.activeWallet,
                             },
                             nick: '',
                             ident: 'INFO',
@@ -784,8 +765,6 @@ export default {
     color: var(--comp-statebrowser-fg);
     font-size: 10px;
 }
-
-/* MyDoge connesso */
 
 .tipform-connected {
     width: 100%;

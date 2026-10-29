@@ -3,13 +3,6 @@
         <div class="tip-card-icon">
             <div class="tip-card-wallet-icon">
                 <img
-                    v-if="wallet === 'dogesoft'"
-                    src="/plugins/plugin-dogecoin-wallet/imgs/dogesoft.png"
-                    alt="DogeSoft"
-                >
-
-                <img
-                    v-else
                     src="/plugins/plugin-dogecoin-wallet/imgs/dogedrop.png"
                     alt="DogeDrop"
                 >
@@ -65,7 +58,7 @@
 
 <script>
 export default {
-    props: ['id', 'amount', 'channel', 'self', 'error', 'reason', 'wallet'],
+    props: ['id', 'amount', 'channel', 'self', 'error', 'reason'],
 
     data() {
         return {

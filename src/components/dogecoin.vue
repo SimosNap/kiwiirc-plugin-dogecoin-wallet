@@ -34,9 +34,7 @@
             <div class="tipform-header">
                 <img
                     class="tipform-wallet-icon"
-                    :src="pluginState.activeWallet === 'dogesoft'
-                        ? '/plugins/plugin-dogecoin-wallet/imgs/dogesoft.png'
-                        : '/plugins/plugin-dogecoin-wallet/imgs/dogedrop.png'"
+                    src="/plugins/plugin-dogecoin-wallet/imgs/dogedrop.png"
                     alt=""
                 >
                 <span>{{ $t('plugin-dogecoin-wallet:tip') }} {{ user.nick }}</span>
@@ -95,9 +93,7 @@
 
                 <img
                     class="tipform-wallet-icon"
-                    :src="pluginState.activeWallet === 'dogesoft'
-                        ? '/plugins/plugin-dogecoin-wallet/imgs/dogesoft.png'
-                        : '/plugins/plugin-dogecoin-wallet/imgs/dogedrop.png'"
+                    src="/plugins/plugin-dogecoin-wallet/imgs/dogedrop.png"
                     alt=""
                 >
                 <span>{{ $t('plugin-dogecoin-wallet:dogecoin_address') }}</span>
@@ -210,31 +206,14 @@ export default {
                 return;
             }
 
-            let transaction;
+            const dogedrop = window.doge;
 
-            if (this.pluginState.activeWallet === 'dogesoft') {
-                const dogesoft = window.dogesoft;
-
-                transaction = dogesoft.sendDoge({
-                    to: this.address,
-                    amount: Number(this.tipAmount),
-                }).then((result) => ({
-                    txId: result.txid,
-                }));
-            } else if (this.pluginState.activeWallet === 'dogedrop') {
-                const dogedrop = window.doge;
-
-                transaction = dogedrop.requestTransaction({
-                    recipientAddress: this.address,
-                    dogeAmount: this.tipAmount,
-                });
-            } else {
-                this.tiperror = true;
-                return;
-            }
+            const transaction = dogedrop.requestTransaction({
+                recipientAddress: this.address,
+                dogeAmount: this.tipAmount,
+            });
 
             transaction.then((txReqRes) => {
-                // console.log('request transaction result', txReqRes);
                 let buffer = this.$state.getActiveBuffer();
                 let mynick = this.$state.getActiveNetwork().nick;
 
@@ -264,7 +243,6 @@ export default {
                             self: true,
                             error: false,
                             reason: '',
-                            wallet: this.pluginState.activeWallet,
                         },
                         nick: '',
                         ident: 'INFO',
@@ -294,7 +272,6 @@ export default {
                                 self: true,
                                 error: true,
                                 reason: error.message,
-                                wallet: this.pluginState.activeWallet,
                             },
                             nick: '',
                             ident: 'INFO',
