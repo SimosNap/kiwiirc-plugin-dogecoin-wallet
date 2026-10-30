@@ -211,6 +211,7 @@ export default {
             const transaction = dogedrop.requestTransaction({
                 recipientAddress: this.address,
                 dogeAmount: this.tipAmount,
+                fee: 'slow',
             });
 
             transaction.then((txReqRes) => {

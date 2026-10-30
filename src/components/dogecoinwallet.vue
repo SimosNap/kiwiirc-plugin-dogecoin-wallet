@@ -88,10 +88,11 @@
                     <button
                         type="button"
                         class="DogeDropOpenWallet"
+                        :title="$t('plugin-dogecoin-wallet:open_wallet')"
+                        :aria-label="$t('plugin-dogecoin-wallet:open_wallet')"
                         @click="openWallet"
                     >
                         <i class="fa fa-external-link" aria-hidden="true" />
-                        Wallet
                     </button>
                 </div>
             </template>
@@ -463,6 +464,11 @@ export default {
     }
 
     .DogeDropWallet .balance {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+
         margin-top: 8px;
         padding: 7px 3px 1px;
 
@@ -473,6 +479,46 @@ export default {
         line-height: 1.3;
         color: var(--comp-statebrowser-fg);
         text-align: left;
+    }
+
+    .DogeDropOpenWallet {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+
+        width: 24px;
+        height: 24px;
+        padding: 0;
+
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 4px;
+
+        color: var(--comp-statebrowser-fg);
+        font-family: inherit;
+        font-size: 12px;
+        opacity: 0.65;
+
+        cursor: pointer;
+
+        transition:
+            background-color 0.15s ease,
+            border-color 0.15s ease,
+            color 0.15s ease,
+            opacity 0.15s ease;
+    }
+
+    .DogeDropOpenWallet:hover {
+        background: var(--comp-ui-surface-hover-bg);
+        border-color: var(--comp-ui-surface-hover-border);
+        color: var(--brand-primary);
+        opacity: 1;
+    }
+
+    .DogeDropOpenWallet:focus-visible {
+        outline: 2px solid var(--brand-primary);
+        outline-offset: 2px;
     }
 
     /* Conferma sincronizzazione NickServ */

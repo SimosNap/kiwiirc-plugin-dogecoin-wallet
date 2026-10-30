@@ -6,12 +6,6 @@
                     src="/plugins/plugin-dogecoin-wallet/imgs/dogedrop.png"
                     alt="DogeDrop"
                 >
-
-                <i
-                    v-if="error"
-                    class="fa fa-exclamation-triangle tip-card-wallet-alert"
-                    aria-hidden="true"
-                />
             </div>
         </div>
 
@@ -40,6 +34,10 @@
 
             <template v-else>
                 <div class="tip-card-title">
+                    <i
+                        class="fa fa-exclamation-triangle tip-card-text-alert"
+                        aria-hidden="true"
+                    />
                     {{ $t('plugin-dogecoin-wallet:donation_not_sent') }}
                     {{ $t('plugin-dogecoin-wallet:to') }}
                     <a
@@ -134,14 +132,16 @@ export default {
 
 .tip-card-wallet-icon .tip-card-wallet-alert {
     position: absolute;
-    right: -4px;
-    bottom: -4px;
+    right: -3px;
+    top: -3px;
 
     width: auto;
 
     color: var(--brand-error);
-    font-size: 16px;
+    opacity: 0.7;
+    font-size: 19px;
     line-height: 1;
+    z-index: 1;
 }
 
 /* ============================================================
@@ -215,6 +215,13 @@ export default {
     line-height: 1.35;
 
     opacity: 0.75;
+}
+
+.tip-card-text-alert {
+    margin-right: 3px;
+    color: var(--brand-error);
+    opacity: 0.65;
+    font-size: 12px;
 }
 
 /* ============================================================
